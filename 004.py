@@ -1,28 +1,36 @@
 '''
-this version is not so efficient
-should optimize later
+copy from @ChuntaoLu
+notice 2 args are both sorted arrays
 '''
-def solution(nums1, nums2):
-    all_list = nums1+nums2
-    sorted_list = quick_sort(all_list)
-    middle_index = len(sorted_list) // 2
-    if middle_index * 2 != len(sorted_list):
-        return sorted_list[middle_index]
+
+
+def findMedianSortedArrays(self, A, B):
+    l = len(A) + len(B)
+    if l % 2 == 1:
+        return self.kth(A, B, l // 2)
     else:
-        return (sorted_list[middle_index-1] + sorted_list[middle_index])/2.0
+        return (self.kth(A, B, l // 2) + self.kth(A, B, l // 2 - 1)) / 2.
 
-def quick_sort(all_list):
-    if len(all_list) == 0:
-        return []
-    left_list =[]
-    right_list = []
-    middle = all_list[0]
-    for item in all_list[1:]:
-        if item <= middle:
-            left_list.append(item)
+
+def kth(self, a, b, k):
+    if not a:
+        return b[k]
+    if not b:
+        return a[k]
+    ia, ib = len(a) // 2, len(b) // 2
+    ma, mb = a[ia], b[ib]
+
+    # when k is bigger than the sum of a and b's median indices
+    if ia + ib < k:
+        # if a's median is bigger than b's, b's first half doesn't include k
+        if ma > mb:
+            return self.kth(a, b[ib + 1:], k - ib - 1)
         else:
-            right_list.append(item)
-    return quick_sort(left_list)+[middle]+quick_sort(right_list)
-
-
-print(solution([1,3],[2]))
+            return self.kth(a[ia + 1:], b, k - ia - 1)
+    # when k is smaller than the sum of a and b's indices
+    else:
+        # if a's median is bigger than b's, a's second half doesn't include k
+        if ma > mb:
+            return self.kth(a[:ia], b, k)
+        else:
+            return self.kth(a, b[:ib], k)
